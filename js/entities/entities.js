@@ -124,13 +124,14 @@ game.PlayerBaseEntity = me.Entity.extend({
          this.health = 10;
          this.alwaysUpdate = true;
          this.body.onCollision = this.onCollision.bind(this);
-         
-         this.type = "PlayerBaseEntity";
+        
+         this.type = "PlayerBase";
          
          this.renderable.addAnimation("idle", [0]);
          this.renderable.addAnimation("broken",[1]);
          this.renderable.setCurrentAnimation("idle");
     },
+    
     update:function(delta){
         if(this.health<=0){
             this.broken=true;
@@ -141,6 +142,15 @@ game.PlayerBaseEntity = me.Entity.extend({
         this._super(me.Entity,"update",[delta]);
         return true;
     },
+    
+    
+    
+    loseHealth: function(damage){
+      this.health = this.health - damage;  
+    },
+    
+    
+    
     onCollision: function(){
         
     }
@@ -202,20 +212,39 @@ game.EnemyCreep = me.Entity.extend({
         }]);
     this.health = 10;
     this.alwaysUpdate = true;
-    
+    //this.attacking lets us know if the enemy is currently  attacking
+    this.attacking = false;
+    //keeps track of when our creep last attack anything
+    this.lastAttacking = new Date().getTime();
+    //keeps track of the last our creep hit anything
+    this.lastHit = new Date().getTime();
+    this.now = new Date().getTime();
     this.body.setVelocity(3, 20);
     this.type = "EnemyCreep";
     this.renderable.addAnimation("walk",[3, 4, 5],80);
     this.renderable.setCurrentAnimation("walk");
     },
     update: function(delta){
-        this.body.vel.x -=this.body.accel.x *me.timer.tick
+        this.now = new Date().getTime();
+        this.body.vel.x -=this.body.accel.x *me.timer.tick;
+        
+ 
+        me.collision.check(this,true,this.collideHandler.bind(this),true);
         this.body.update(delta);
         this._super(me.Entity, "update", [delta]);
-        
-        
         return true;
         
+    },
+    collideHandler: function(response){
+        if(response.b.type=== 'PlayerBase'){
+            this.attacking=true;
+            //this.lastAttacking=this.now;
+            this.body.vel.x = 0;
+            if((this.now-this.lastHit >= 1000)){
+                this.lastHit = this.now;
+                response.b.loseHealth(1);
+            }
+        }
     }
 });
 
