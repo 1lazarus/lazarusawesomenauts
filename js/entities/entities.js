@@ -10,7 +10,7 @@ game.PlayerEntity = me.Entity.extend({
                     return(new me.Rect(0, 0, 64, 64)).toPolygon();
                 }
             }]);
-        
+        this.type = "PlayerEntity";
         
         this.body.setVelocity(5, 20);
         //keeps track of direction your characters going
@@ -79,6 +79,11 @@ game.PlayerEntity = me.Entity.extend({
         return true;
 
     },
+    loseHealth: function(damage){
+      this.health = this.health - damage;  
+    },
+    
+    
     collideHandler: function(response){
       if(response.b.type==='EnemyBaseEntity'){
           var ydif = this.pos.y - response.b.pos.y;
@@ -240,10 +245,27 @@ game.EnemyCreep = me.Entity.extend({
             this.attacking=true;
             //this.lastAttacking=this.now;
             this.body.vel.x = 0;
+            //keeps moving the creep to right to maintain its position
             if((this.now-this.lastHit >= 1000)){
+                //updates the lasthit timer
                 this.lastHit = this.now;
+                //makes the player base call its losehealth function passes 
+                //damage of 1
                 response.b.loseHealth(1);
             }
+        }else if (response.b.type==='PlayerEntity'){
+                 this.attacking=true;
+            //this.lastAttacking=this.now;
+            this.body.vel.x = 0;
+            //keeps moving the creep to right to maintain its position
+            if((this.now-this.lastHit >= 1000)){
+                //updates the lasthit timer
+                this.lastHit = this.now;
+                //makes the player base call its losehealth function passes 
+                //damage of 1
+                response.b.loseHealth(1);
+            }
+            
         }
     }
 });
