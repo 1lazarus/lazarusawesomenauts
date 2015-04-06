@@ -11,8 +11,8 @@ game.PlayerEntity = me.Entity.extend({
                 }
             }]);
         this.type = "PlayerEntity";
-        
-        this.body.setVelocity(5, 20);
+        this.health = game.data.playerBaseHealth
+        this.body.setVelocity(game.data.playerMoveSpeed, 20);
         //keeps track of direction your characters going
         this.facing = "right";
         this.now = new Date().getTime();
@@ -102,8 +102,8 @@ game.PlayerEntity = me.Entity.extend({
             this.body.falling = false;
             this.body.vel.y = -1;
         }
-        if(this.renderable.isCurrentAnimation("attack")&& this.now-this.lastHit>=600){
-            response.b.loseHealth();
+        if(this.renderable.isCurrentAnimation("attack")&& this.now-this.lastHit>= game.data.playerAttackTimer){
+            response.b.loseHealth(game.data.playerAttack);
             this.lastHit=this.now;
             console.log("tower Hit");
         }
@@ -124,12 +124,12 @@ game.PlayerEntity = me.Entity.extend({
               }
           }
           
-          if(this.renderable.isCurrentAnimation("attack")&& this.now-this.lastHit>=600
+          if(this.renderable.isCurrentAnimation("attack")&& this.now-this.lastHit>= game.data.playerAttackTimer
                   && (Math.abs(ydif)<=40)&&
                   ((xdif>0) && this.facing==="left")  ||  ((xdif<0) && this.facing=="right")
                   ){
               this.lastHit=this.now;
-              response.b.loseHealth(1);
+              response.b.loseHealth(game.data.playerAttack);
           }
       }  
     }
@@ -149,7 +149,7 @@ game.PlayerBaseEntity = me.Entity.extend({
               }
         }]); 
          this.broken = false;
-         this.health = 10;
+         this.health = game.data.playerBaseHealth;
          this.alwaysUpdate = true;
          this.body.onCollision = this.onCollision.bind(this);
         
@@ -197,7 +197,7 @@ game.EnemyBaseEntity = me.Entity.extend({
               }
         }]); 
          this.broken = false;
-         this.health = 10;
+         this.health = game.data.enemyBaseHealth;
          this.alwaysUpdate = true;
          this.body.onCollision = this.onCollision.bind(this);
          
@@ -238,7 +238,7 @@ game.EnemyCreep = me.Entity.extend({
                 }
                 
         }]);
-    this.health = 10;
+    this.health = game.data.enemyCreepHealth;
     this.alwaysUpdate = true;
     //this.attacking lets us know if the enemy is currently  attacking
     this.attacking = false;
@@ -294,7 +294,7 @@ game.EnemyCreep = me.Entity.extend({
                 this.lastHit = this.now;
                 //makes the player base call its losehealth function passes 
                 //damage of 1
-                response.b.loseHealth(1);
+                response.b.loseHealth(game.data.enemyCreepAttack);
             }
             
         }
