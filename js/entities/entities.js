@@ -18,6 +18,7 @@ game.PlayerEntity = me.Entity.extend({
         this.now = new Date().getTime();
         //time my attacks
         this.lastHit = this.now;
+        this.dead = false;
         this.lastAttack = new Date().getTime();
         //Enemy wiil follow u//
         me.game.viewport.follow(this.pos,me.game.viewport.AXIS.BOTH);
@@ -29,6 +30,13 @@ game.PlayerEntity = me.Entity.extend({
     },
     update: function(delta) {
         this.now = new Date().getTime();
+        //if my health goes below zero i will die
+        if(this.health <=0){
+            this.dead = true;
+            this.pos.x = 10;
+            this.pos.y = 0;
+            this.health = game.data.playerHealth;
+        }
         if (me.input.isKeyPressed("right")) {
             //adds to the position of  my x by the velocity define above in
             //setVelocity() and multiplying it by me.timer.tick.
@@ -120,7 +128,7 @@ game.PlayerEntity = me.Entity.extend({
           }else{
               this.pos.x = this.pos.x - 1;
                if(this.facing==="right"){
-                  this.vel.x = 0;
+                  this.body.vel.x = 0;
               }
           }
           

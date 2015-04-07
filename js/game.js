@@ -12,9 +12,10 @@ var game = {
                 playerHealth: 10,
                 enemyCreepAttack: 1,
                 playerAttack: 1,
-                orcBaseDamage: 10,
-                orcBaseHealth: 100,
-                
+//                orcBaseDamage: 10,
+//                orcBaseHealth: 100,
+//                orcBaseSpeed: 3,
+//                orcBaseDefense: 0,
                 playerAttackTimer: 1000,
                 creepAttackTimer: 1000,
                 playerMoveSpeed: 5,
