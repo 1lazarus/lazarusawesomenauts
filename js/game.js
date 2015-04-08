@@ -8,8 +8,8 @@ var game = {
 		score : 0,
                 enemyBaseHealth: 10,
                 playerBaseHealth: 10,
-                enemyCreepHealth: 10,
-                playerHealth: 10,
+                enemyCreepHealth: 2,
+                playerHealth: 1,
                 enemyCreepAttack: 1,
                 playerAttack: 1,
 //                orcBaseDamage: 10,
@@ -67,6 +67,6 @@ var game = {
 		me.state.set(me.state.PLAY, new game.PlayScreen());
                 
 		// Start the game.
-		me.state.change(me.state.PLAY);
+		me.state.change(me.state.MENU);
 	}
 };

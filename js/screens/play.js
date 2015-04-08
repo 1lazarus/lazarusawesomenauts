@@ -9,8 +9,7 @@ game.PlayScreen = me.ScreenObject.extend({
                 
                 var player = me.pool.pull("player",0,420,{});
                 
-                var gamemanager = me.pool.pull("GameManager",0,0,{});
-                me.game.world.addChild(gamemanager,0);
+               this.resetPlayer(0,420);
                 
                 
                 me.input.bindKey(me.input.KEY.RIGHT,"right");
@@ -31,5 +30,9 @@ game.PlayScreen = me.ScreenObject.extend({
 	onDestroyEvent: function() {
 		// remove the HUD from the game world
 		me.game.world.removeChild(this.HUD);
-	}
+	},
+        resetPlayer: function(x, y){
+             game.data.player = me.pool.pull("player",x,y,{});
+             me.game.world.addChild(game.data.player,5);
+        }
 });
