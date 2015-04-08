@@ -18,6 +18,7 @@ game.PlayerEntity = me.Entity.extend({
         this.now = new Date().getTime();
         //time my attacks
         this.lastHit = this.now;
+        this.attack = game.data.playerAttack;
         this.dead = false;
         this.lastAttack = new Date().getTime();
         //Enemy wiil follow u//
@@ -133,8 +134,12 @@ game.PlayerEntity = me.Entity.extend({
                   && (Math.abs(ydif)<=40)&&
                   (((xdif>0) && this.facing==="left")  ||  ((xdif<0) && this.facing=="right"))
                   ){
-              console.log("app academy");
               this.lastHit=this.now;
+              //if the creeps health is less than our attack excute code in if statement
+              if(response.b.health <= game.data.playerAttack){
+                  //adds one gold
+                  game.data.gold += 1;
+              }
               response.b.loseHealth(game.data.playerAttack);
           }
       }  
