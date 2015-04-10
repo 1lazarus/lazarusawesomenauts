@@ -1,52 +1,23 @@
 game.EnemyCreep = me.Entity.extend({
     init: function(x, y, settings) {
-     this.setSuper();
-     this.setPlayerTimers();
-     this.setAttributes();
-     this.setFlags();
-    
+     
+        this.health = game.data.enemyCreepHealth;
         this.alwaysUpdate = true;
         //this.attacking lets us know if the enemy is currently  attacking
-  
-       
-     
+        this.attacking = false;
+        //keeps track of when our creep last attack anything
+        this.lastAttacking = new Date().getTime();
+        //keeps track of the last our creep hit anything
+        this.lastHit = new Date().getTime();
+        this.now = new Date().getTime();
+        this.body.setVelocity(3, 20);
         this.type = "EnemyCreep";
         this.renderable.addAnimation("walk", [3, 4, 5], 80);
         this.renderable.setCurrentAnimation("walk");
     },
-    setSuper:function(){
-            this._super(me.Entity, 'init', [x, y, {
-                image: "creep1",
-                width: 32,
-                height: 64,
-                spritewidth: "32",
-                spriteheiight: "64",
-                getShape: function() {
-                    return (new me.Rect(0, 0, 32, 64)).toPolygon();
-                }
-
-            }]);
-    },
-    setPlayerTimers:function(){
-         this.lastHit = new Date().getTime();
-        this.now = new Date().getTime();
-    },
-    setAttributes:function(){
-            this.health = game.data.enemyCreepHealth;
-               this.body.setVelocity(3, 20);
-                     this.attacking = false;
-        //keeps track of when our creep last attack anything
-      
-    },
-    setFlags:function(){
-       this.facing = "right";
-       this.dead = false;
-    },
     //Crrep can lose health if attacked
     loseHealth: function(damage) {
         this.health = this.health - damage;
-          this.lastAttacking = new Date().getTime();
-        //keeps track of the last our creep hit anything
     },
     update: function(delta) {
         if (this.health <= 0) {
