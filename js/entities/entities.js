@@ -2,24 +2,15 @@ game.PlayerEntity = me.Entity.extend({
     init: function(x, y, settings) {
      this.setSuper(); 
      this.setPlayerTimers();
-        this.type = "PlayerEntity";
-        this.health = game.data.playerHealth;
-        this.body.setVelocity(game.data.playerMoveSpeed, 20);
-        //keeps track of direction your characters going
-        this.facing = "right";
-        this.now = new Date().getTime();
-        //time my attacks
-        this.lastHit = this.now;
-        this.attack = game.data.playerAttack;
-        this.dead = false;
+     this.setAttributes();
+     this.type = "PlayerEntity";
+     this.setFlags();
+     this.addAnimation();
+       
         this.lastAttack = new Date().getTime();
         //Enemy wiil follow u//
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
-        this.renderable.addAnimation("idle", [78]);
-        this.renderable.addAnimation("walk", [117, 118, 119, 120, 121, 122, 124, 123, 124, 125], 80);
-        this.renderable.addAnimation("attack", [65, 66, 67, 68, 69, 70, 71, 72], 80);
-
-        this.renderable.setCurrentAnimation("idle");
+       
     },
     setSuper:function(){
            this._super(me.Entity, 'init', [x, y, {
@@ -33,16 +24,34 @@ game.PlayerEntity = me.Entity.extend({
                 }
             }]);
     },
-    setPlayer:function(){
-        
+    setPlayerTimers:function(){
+      this.now = new Date().getTime();
+      this.lastHit = this.now;
+    },
+    setAttributes:function(){
+        this.health = game.data.playerHealth;
+        this.body.setVelocity(game.data.playerMoveSpeed, 20);
+        this.attack = game.data.playerAttack;
+    },
+    setFlags:function(){
+       //keeps track of direction your characters going
+       this.facing = "right";
+       //time my attacks
+        this.dead = false;  
+        this.renderable.setCurrentAnimation("idle");
+    },
+    addAnimation:function(){
+        this.renderable.addAnimation("idle", [78]);
+        this.renderable.addAnimation("walk", [117, 118, 119, 120, 121, 122, 124, 123, 124, 125], 80);
+        this.renderable.addAnimation("attack", [65, 66, 67, 68, 69, 70, 71, 72], 80);
+
+       
     },
     update: function(delta) {
         this.now = new Date().getTime();
-        //if my health goes below zero i will die
-        if (this.health <= 0) {
-            this.dead = true;
-
-        }
+        
+        this.dead = checkIfDead();
+    
         if (me.input.isKeyPressed("right")) {
             //adds to the position of  my x by the velocity define above in
             //setVelocity() and multiplying it by me.timer.tick.
@@ -92,6 +101,14 @@ game.PlayerEntity = me.Entity.extend({
         this._super(me.Entity, "update", [delta]);
         return true;
 
+    },
+    checkIfDead:function(){
+            //if my health goes below zero i will die
+        if (this.health <= 0) {
+            return true;
+
+        }
+        return false; 
     },
     loseHealth: function(damage) {
         console.log(this.health);
