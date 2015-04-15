@@ -1,6 +1,6 @@
 game.PlayerEntity = me.Entity.extend({
     init: function(x, y, settings) {
-     this.setSuper(); 
+     this.setSuper(x, y); 
      this.setPlayerTimers();
      this.setAttributes();
      this.type = "PlayerEntity";
@@ -12,7 +12,7 @@ game.PlayerEntity = me.Entity.extend({
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
        
     },
-    setSuper:function(){
+    setSuper:function(x, y){
            this._super(me.Entity, 'init', [x, y, {
                 image: "player",
                 width: 64,
@@ -49,42 +49,14 @@ game.PlayerEntity = me.Entity.extend({
        
     },
     update: function(delta) {
-        this.now = new Date().getTime();
-        
-        this.dead = checkIfDead();
-        
+        this.now = new Date().getTime(); 
+        this.dead = this.checkIfDead();
         this.checkKeyPressesAndMove();
-
-
-
-
-        if (this.attacking) {
-            if (!this.renderable.isCurrentAnimation("attack")) {
-                console.log(!this.renderable.isCurrentAnimation("attack"));
-                //sets the current animation to attack and once that is over 
-                //goes back 2 idle animation
-                this.renderable.setCurrentAnimation("attack", "idle");
-                //Makes it so that the next time wwe start this sequence we begin
-                //from the first animation, not whenever we left off when  we
-                //switched to anonther animation 
-                this.renderable.setAnimationFrame();
-            }
-        }
-        else if (this.body.vel.x !== 0 && !this.renderable.isCurrentAnimation("attack")) {
-            if (!this.renderable.isCurrentAnimation("walk")) {
-                this.renderable.setCurrentAnimation("walk");
-            }
-        } else if (!this.renderable.isCurrentAnimation("attack")) {
-            this.renderable.setCurrentAnimation("idle");
-        }
-
-
+        this.setAnimation(); 
         me.collision.check(this, true, this.collideHandler.bind(this), true);
-
         this.body.update(delta);
         this._super(me.Entity, "update", [delta]);
         return true;
-
     },
     checkIfDead:function(){
             //if my health goes below zero i will die
@@ -125,13 +97,38 @@ game.PlayerEntity = me.Entity.extend({
        this.body.jumping = true;
             this.body.vel.y -= this.body.accel.y * me.timer.tick;  
     },
+    setAnimation:function(){
+             if (this.attacking) {
+            if (!this.renderable.isCurrentAnimation("attack")) {
+                console.log(!this.renderable.isCurrentAnimation("attack"));
+                //sets the current animation to attack and once that is over 
+                //goes back 2 idle animation
+                this.renderable.setCurrentAnimation("attack", "idle");
+                //Makes it so that the next time wwe start this sequence we begin
+                //from the first animation, not whenever we left off when  we
+                //switched to anonther animation 
+                this.renderable.setAnimationFrame();
+            }
+        }
+        else if (this.body.vel.x !== 0 && !this.renderable.isCurrentAnimation("attack")) {
+            if (!this.renderable.isCurrentAnimation("walk")) {
+                this.renderable.setCurrentAnimation("walk");
+            }
+        } else if (!this.renderable.isCurrentAnimation("attack")) {
+            this.renderable.setCurrentAnimation("idle");
+        }
+    },
     loseHealth: function(damage) {
         console.log(this.health);
         this.health = this.health - damage;
     },
     collideHandler: function(response) {
         if (response.b.type === 'EnemyBaseEntity') {
-            var ydif = this.pos.y - response.b.pos.y;
+          this.collideWithEnemyCreep(response);
+        }
+    },
+    collideWithEnemyBase: function(response){
+              var ydif = this.pos.y - response.b.pos.y;
             var xdif = this.pos.x - response.b.pos.x;
 
             if (xdif > -35 && this.facing === 'right' && (xdif < 0)) {
@@ -151,12 +148,21 @@ game.PlayerEntity = me.Entity.extend({
                 this.lastHit = this.now;
                 console.log("tower Hit");
             }
+    },
+    collideWithEnemyCreep:function(response){
+          this.collideWithEnemyBase(response);
 
-        } else if (response.b.type === 'EnemyCreep') {
             var xdif = this.pos.x - response.b.pos.x;
             var ydif = this.pos.y - response.b.pos.y;
 
-            if (xdif > 0) {
+            this.stopMovement(xdif); 
+         
+             if(this.checkAttack(xdif,ydif)){
+             this.hitCreep(response);
+             };
+    },
+    stopMovement:function(xdif){
+             if (xdif > 0) {
                 this.pos.x = this.pos.x + 1;
                 if (this.facing === "left") {
                     this.body.vel.x = 0;
@@ -167,21 +173,27 @@ game.PlayerEntity = me.Entity.extend({
                     this.body.vel.x = 0;
                 }
             }
-
+    },
+    checkAttack:function(xdif,ydif){
+        
             if (this.renderable.isCurrentAnimation("attack") && this.now - this.lastHit >= game.data.playerAttackTimer
                     && (Math.abs(ydif) <= 40) &&
                     (((xdif > 0) && this.facing === "left") || ((xdif < 0) && this.facing == "right"))
                     ) {
                 this.lastHit = this.now;
                 //if the creeps health is less than our attack excute code in if statement
-                if (response.b.health <= game.data.playerAttack) {
+                return true;
+               }
+               return false;
+    },
+    hitCreep:function(response){
+      if (response.b.health <= game.data.playerAttack) {
                     //adds one gold for a creep kill
                     game.data.gold += 1;
                     console.log("Current gold:" + game.data.gold);
                 }
                 response.b.loseHealth(game.data.playerAttack);
-            }
-        }
+                   
     }
 
 });
