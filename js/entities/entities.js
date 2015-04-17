@@ -6,7 +6,7 @@ game.PlayerEntity = me.Entity.extend({
      this.type = "PlayerEntity";
      this.setFlags();
      this.addAnimation();
-       
+       this.renderable.setCurrentAnimation("idle");
         this.lastAttack = new Date().getTime();
         //Enemy wiil follow u//
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
@@ -38,7 +38,7 @@ game.PlayerEntity = me.Entity.extend({
        this.facing = "right";
        //time my attacks
         this.dead = false;  
-        this.renderable.setCurrentAnimation("idle");
+        
         this.attacking = false;
     },
     addAnimation:function(){
@@ -66,7 +66,7 @@ game.PlayerEntity = me.Entity.extend({
         }
         return false; 
     },
-    cheKeyPressesAndMove:function(){
+    checkKeyPressesAndMove:function(){
             
         if (me.input.isKeyPressed("right")) {
                  this.moveRight();
@@ -124,6 +124,8 @@ game.PlayerEntity = me.Entity.extend({
     },
     collideHandler: function(response) {
         if (response.b.type === 'EnemyBaseEntity') {
+          this.collideWithEnemyBase(response);
+        }if (response.b.type === 'EnemyCreep') {
           this.collideWithEnemyCreep(response);
         }
     },

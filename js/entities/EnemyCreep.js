@@ -1,6 +1,16 @@
 game.EnemyCreep = me.Entity.extend({
     init: function(x, y, settings) {
-     
+        this._super(me.Entity, 'init', [x, y, {
+                image: "creep1",
+                width: 32,
+                height: 64,
+                spritewidth: "32",
+                spriteheiight: "64",
+                getShape: function() {
+                    return (new me.Rect(0, 0, 32, 64)).toPolygon();
+                }
+
+            }]);
         this.health = game.data.enemyCreepHealth;
         this.alwaysUpdate = true;
         //this.attacking lets us know if the enemy is currently  attacking
