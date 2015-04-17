@@ -1,4 +1,4 @@
-game.GameManager = Object.extend({
+game.GameTimeManager = Object.extend({
     init: function(x, y, settings) {
         this.now = new Date().getTime();
         this.paused = false;
@@ -26,6 +26,17 @@ game.GameManager = Object.extend({
         }
         return true;
     }
+});
+
+game.HeroDeathManager = Object.extend({
+    init:function(x,y,settings){
+        
+    }, 
+    
+    update:function(){
+         
+    }
+    
 });
 
 
