@@ -25,7 +25,7 @@ game.EnemyBaseEntity = me.Entity.extend({
         if (this.health <= 0) {
             this.broken = true;
             this.renderable.setCurrentAnimation("broken");
-            game.data.win = 'true';
+            game.data.win = true;
         }
         this.body.update(delta);
 
