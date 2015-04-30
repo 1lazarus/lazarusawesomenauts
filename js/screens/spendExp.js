@@ -24,7 +24,7 @@ game.spendExp = me.ScreenObject.extend({
                 this.font.draw(renderer.getContext(), "F2: ADD STARTING GOLD " + game.data.exp.toString(), this.pos.x + 100, this.pos.y + 150);
                 this.font.draw(renderer.getContext(), "F3: INCREASE ATTACK DAMAGE " + game.data.exp.toString(), this.pos.x + 100, this.pos.y + 200);
                 this.font.draw(renderer.getContext(), "F4: INCREASE STARTING HEALTH " + game.data.exp.toString(), this.pos.x + 100, this.pos.y + 250);
- },
+ }
         })));
         
         this.handler = me.event.subscribe(me.event.KEYDOWN, function (action, keyCoode, edge){
